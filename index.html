@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lofi Focus Room</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Aesthetic fonts from Google -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Space+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Default Theme Colors */
+        --bg-color: #fdf0d5;
+        --accent-color: #ae2012;
+        --card-bg: rgba(255, 255, 255, 0.65);
+        --text-main: #001219;
+        --transition-speed: 0.6s;
+      }
+
+      body {
+        font-family: 'Varela Round', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        overflow-x: hidden;
+        transition: background-color var(--transition-speed) ease;
+        background-image: linear-gradient(
+            rgba(253, 240, 213, 0.4),
+            rgba(253, 240, 213, 0.4)
+          ),
+          url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=2070');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        position: relative;
+      }
+
+      /* Elements that need dynamic color transitions */
+      .text-accent {
+        color: var(--accent-color);
+        transition: color var(--transition-speed) ease;
+      }
+      .bg-accent {
+        background-color: var(--accent-color);
+        transition: background-color var(--transition-speed) ease;
+      }
+      .border-accent {
+        border-color: var(--accent-color);
+        transition: border-color var(--transition-speed) ease;
+      }
+
+      /* Background Floating Elements */
+      .floating {
+        position: fixed;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.18;
+        animation: float-up var(--duration) infinite linear;
+        font-size: var(--size);
+        bottom: -10%;
+      }
+
+      @keyframes float-up {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.2;
+        }
+        90% {
+          opacity: 0.2;
+        }
+        100% {
+          transform: translateY(-110vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      .glass {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 32px;
+        box-shadow: 0 15px 45px 0 rgba(0, 0, 0, 0.05);
+        transition: border-color var(--transition-speed) ease;
+      }
+
+      .timer-font {
+        font-family: 'Space Mono', monospace;
+      }
+
+      .ambient-btn {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .ambient-btn.active {
+        background: var(--accent-color) !important;
+        color: white !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        transform: translateY(-5px);
+        animation: pulse-soft 2s infinite;
+      }
+
+      @keyframes pulse-soft {
+        0%,
+        100% {
+          transform: scale(1) translateY(-5px);
+        }
+        50% {
+          transform: scale(1.03) translateY(-7px);
+        }
+      }
+
+      /* Initial Landing Overlay */
+      #overlay {
+        position: fixed;
+        inset: 0;
+        background: #fdf0d5;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 1s ease, visibility 1s;
+      }
+
+      .overlay-content {
+        text-align: center;
+        animation: fadeInUp 1s ease-out;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .pulse-btn {
+        animation: pulse-ring 2s infinite;
+      }
+
+      @keyframes pulse-ring {
+        0% {
+          box-shadow: 0 0 0 0 rgba(174, 32, 18, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 15px rgba(174, 32, 18, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(174, 32, 18, 0);
+        }
+      }
+
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: var(--accent-color);
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col items-center p-4 md:p-8">
+    <!-- Audio Unlock Overlay -->
+    <div id="overlay">
+      <div class="overlay-content p-8 max-w-md">
+        <h2 class="text-5xl font-serif italic mb-6 text-[#ae2012] font-black">
+          Lofi Focus Room
+        </h2>
+        <p class="mb-10 opacity-70">
+          Experience deep focus with realistic ambient sounds. Tap to initialize
+          the room.
+        </p>
+        <button
+          onclick="enterRoom()"
+          id="enter-btn"
+          class="pulse-btn bg-[#ae2012] text-white px-14 py-5 rounded-full font-black shadow-2xl hover:scale-105 transition-transform tracking-widest text-lg"
+        >
+          ENTER SPACE
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Atmosphere Elements -->
+    <div class="floating" style="--duration: 15s; --size: 2rem; left: 10%">
+      ❤️
+    </div>
+    <div class="floating" style="--duration: 25s; --size: 3rem; left: 22%">
+      🌸
+    </div>
+    <div class="floating" style="--duration: 18s; --size: 1.5rem; left: 45%">
+      ❤️
+    </div>
+    <div class="floating" style="--duration: 22s; --size: 2.5rem; left: 65%">
+      🌼
+    </div>
+    <div class="floating" style="--duration: 20s; --size: 2rem; left: 85%">
+      🌸
+    </div>
+
+    <!-- Header Section -->
+    <header
+      class="w-full max-w-6xl flex justify-between items-center mb-10 z-10"
+    >
+      <div>
+        <h1 class="text-3xl font-serif italic font-black text-accent">
+          Lofi Focus Room
+        </h1>
+        <p class="text-sm opacity-80">
+          Created by
+          <a
+            href="https://anujtiwari.vercel.app/"
+            target="_blank"
+            class="hover:text-accent font-bold border-b border-accent/30 transition-all"
+            >Anuj Tiwari</a
+          >
+        </p>
+      </div>
+      <div
+        id="real-time"
+        class="text-xl timer-font opacity-80 font-bold bg-white/40 px-5 py-2 rounded-2xl border border-white/50"
+      >
+        00:00:00
+      </div>
+    </header>
+
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-10 z-10">
+      <!-- Timer and Ambience Controls -->
+      <div class="lg:col-span-2 flex flex-col gap-8">
+        <div class="glass p-10 md:p-16 flex flex-col items-center text-center">
+          <div class="flex gap-4 mb-10">
+            <button
+              onclick="setTimer('focus')"
+              id="btn-focus"
+              class="px-8 py-2 rounded-full border-2 border-accent text-sm font-bold transition-all"
+            >
+              Focus
+            </button>
+            <button
+              onclick="setTimer('break')"
+              id="btn-break"
+              class="px-8 py-2 rounded-full border-2 border-accent text-sm font-bold transition-all"
+            >
+              Break
+            </button>
+          </div>
+          <div
+            id="display-timer"
+            class="text-8xl md:text-[10rem] timer-font font-black my-6 text-accent"
+          >
+            25:00
+          </div>
+          <div class="flex gap-8 mt-10">
+            <button
+              id="start-btn"
+              onclick="toggleTimer()"
+              class="bg-accent text-white px-14 py-4 rounded-2xl font-black text-lg hover:scale-105 transition-transform shadow-xl"
+            >
+              START
+            </button>
+            <button
+              onclick="resetTimer()"
+              class="bg-white/40 px-8 py-4 rounded-2xl hover:bg-white/60 transition-colors font-bold text-accent border border-accent/10"
+            >
+              RESET
+            </button>
+          </div>
+        </div>
+
+        <!-- Immersive Sound Controls -->
+        <div class="glass p-8 grid grid-cols-2 md:grid-cols-4 gap-6">
+          <button
+            onclick="toggleAmbient('rain', this)"
+            class="ambient-btn group flex flex-col items-center gap-3 p-6 rounded-[2rem] hover:bg-white/50"
+          >
+            <span class="text-4xl group-hover:scale-110 transition-transform"
+              >🌧️</span
+            >
+            <span
+              class="text-[10px] font-black uppercase tracking-widest opacity-60"
+              >Rain</span
+            >
+          </button>
+          <button
+            onclick="toggleAmbient('fire', this)"
+            class="ambient-btn group flex flex-col items-center gap-3 p-6 rounded-[2rem] hover:bg-white/50"
+          >
+            <span class="text-4xl group-hover:scale-110 transition-transform"
+              >🔥</span
+            >
+            <span
+              class="text-[10px] font-black uppercase tracking-widest opacity-60"
+              >Fire</span
+            >
+          </button>
+          <button
+            onclick="toggleAmbient('cafe', this)"
+            class="ambient-btn group flex flex-col items-center gap-3 p-6 rounded-[2rem] hover:bg-white/50"
+          >
+            <span class="text-4xl group-hover:scale-110 transition-transform"
+              >☕</span
+            >
+            <span
+              class="text-[10px] font-black uppercase tracking-widest opacity-60"
+              >Cafe</span
+            >
+          </button>
+          <button
+            onclick="toggleAmbient('birds', this)"
+            class="ambient-btn group flex flex-col items-center gap-3 p-6 rounded-[2rem] hover:bg-white/50"
+          >
+            <span class="text-4xl group-hover:scale-110 transition-transform"
+              >🐦</span
+            >
+            <span
+              class="text-[10px] font-black uppercase tracking-widest opacity-60"
+              >Nature</span
+            >
+          </button>
+        </div>
+      </div>
+
+      <!-- Task Management Side -->
+      <div class="flex flex-col gap-8">
+        <div class="glass p-8 flex-1 flex flex-col">
+          <h3
+            class="font-serif text-2xl mb-6 text-accent font-black text-center"
+          >
+            Focus Goals
+          </h3>
+          <div class="flex gap-3 mb-6">
+            <input
+              type="text"
+              id="task-input"
+              placeholder="What are you working on?"
+              class="bg-white/50 border-2 border-accent/10 rounded-2xl px-4 py-3 text-sm flex-1 focus:outline-none focus:border-accent transition-colors"
+            />
+            <button
+              onclick="addTask()"
+              class="bg-accent text-white px-5 rounded-2xl font-black text-xl shadow-lg hover:opacity-90 transition-all"
+            >
+              +
+            </button>
+          </div>
+          <ul
+            id="task-list"
+            class="space-y-4 overflow-y-auto max-h-[350px] pr-2 custom-scrollbar"
+          ></ul>
+        </div>
+
+        <div
+          class="glass p-8 italic text-center text-sm opacity-80 leading-relaxed border-l-[6px] border-accent bg-accent/5"
+        >
+          "Small steps every day lead to big results. Stay focused, stay cozy."
+        </div>
+      </div>
+    </main>
+
+    <!-- UI Notification Toast -->
+    <div
+      id="toast"
+      class="fixed bottom-10 bg-accent text-white px-10 py-4 rounded-full font-bold shadow-2xl transform translate-y-40 transition-transform duration-500 z-[2000] text-sm"
+    >
+      Task Added!
+    </div>
+
+    <!-- AUDIO ELEMENTS -->
+    <audio
+      id="audio-rain"
+      loop
+      preload="auto"
+      crossorigin="anonymous"
+      src="https://assets.mixkit.co/active_storage/sfx/2397/2397.wav"
+    ></audio>
+    <audio
+      id="audio-fire"
+      loop
+      preload="auto"
+      crossorigin="anonymous"
+      src="https://cdn.pixabay.com/download/audio/2024/07/05/audio_cb6e14bf87.mp3?filename=u_d3475dm30o-fire-sound-222359.mp3"
+    ></audio>
+    <audio
+      id="audio-cafe"
+      loop
+      preload="auto"
+      crossorigin="anonymous"
+      src="https://cdn.pixabay.com/download/audio/2022/03/09/audio_16035f46f6.mp3?filename=freesound_community-sandwich-cafe-31183.mp3"
+    ></audio>
+    <audio
+      id="audio-birds"
+      loop
+      preload="auto"
+      crossorigin="anonymous"
+      src="https://cdn.pixabay.com/download/audio/2025/11/30/audio_b96506e0f1.mp3?filename=soundreality-birds-forest-nature-445379.mp3"
+    ></audio>
+
+    <script>
+      let audioContext;
+      let audioUnlocked = false;
+
+      // Dynamic Theme Configurations
+      const themes = {
+        default: { bg: '#fdf0d5', accent: '#ae2012' },
+        rain: { bg: '#e0f2fe', accent: '#0369a1' },
+        fire: { bg: '#ffedd5', accent: '#ea580c' },
+        cafe: { bg: '#f5f5dc', accent: '#78350f' },
+        birds: { bg: '#f0fdf4', accent: '#166534' },
+      };
+
+      let activeSounds = new Set();
+
+      function updateTheme() {
+        const root = document.documentElement;
+        let currentTheme = themes.default;
+
+        if (activeSounds.size > 0) {
+          const lastSound = Array.from(activeSounds).pop();
+          currentTheme = themes[lastSound];
+        }
+
+        root.style.setProperty('--bg-color', currentTheme.bg);
+        root.style.setProperty('--accent-color', currentTheme.accent);
+      }
+
+      // Initialize Audio Context on User Interaction
+      function enterRoom() {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const sounds = ['rain', 'fire', 'cafe', 'birds'];
+        const btn = document.getElementById('enter-btn');
+        btn.innerText = 'COZINESS UNLOCKED...';
+        btn.disabled = true;
+
+        const unlockPromises = sounds.map((id) => {
+          const el = document.getElementById(`audio-${id}`);
+          return el
+            .play()
+            .then(() => {
+              el.pause();
+              el.currentTime = 0;
+            })
+            .catch((e) => console.log('Unlock failed for:', id));
+        });
+
+        Promise.all(unlockPromises).finally(() => {
+          audioUnlocked = true;
+          document.getElementById('overlay').style.opacity = '0';
+          setTimeout(() => {
+            document.getElementById('overlay').style.visibility = 'hidden';
+          }, 1000);
+        });
+      }
+
+      // Global unlock mechanism
+      window.addEventListener(
+        'click',
+        () => {
+          if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume();
+          }
+        },
+        { once: true }
+      );
+
+      function updateClock() {
+        const now = new Date();
+        document.getElementById('real-time').innerText = now.toLocaleTimeString(
+          [],
+          { hour: '2-digit', minute: '2-digit', second: '2-digit' }
+        );
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      let timeLeft = 25 * 60;
+      let timerId = null;
+      let isFocusMode = true;
+
+      function updateDisplay() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        document.getElementById('display-timer').innerText = `${mins
+          .toString()
+          .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      function setTimer(mode) {
+        isFocusMode = mode === 'focus';
+        timeLeft = isFocusMode ? 25 * 60 : 5 * 60;
+        resetTimer();
+        const fBtn = document.getElementById('btn-focus');
+        const bBtn = document.getElementById('btn-break');
+        if (isFocusMode) {
+          fBtn.style.backgroundColor = 'var(--accent-color)';
+          fBtn.style.color = 'white';
+          bBtn.style.backgroundColor = 'transparent';
+          bBtn.style.color = 'var(--accent-color)';
+        } else {
+          bBtn.style.backgroundColor = 'var(--accent-color)';
+          bBtn.style.color = 'white';
+          fBtn.style.backgroundColor = 'transparent';
+          fBtn.style.color = 'var(--accent-color)';
+        }
+      }
+      setTimer('focus');
+
+      function toggleTimer() {
+        const btn = document.getElementById('start-btn');
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+          btn.innerText = 'START';
+        } else {
+          btn.innerText = 'PAUSE';
+          timerId = setInterval(() => {
+            timeLeft--;
+            updateDisplay();
+            if (timeLeft <= 0) {
+              clearInterval(timerId);
+              timerId = null;
+              showToast(
+                isFocusMode
+                  ? 'Focus Session Over! Take a break.'
+                  : 'Break Over! Time to work.'
+              );
+              setTimer(isFocusMode ? 'break' : 'focus');
+            }
+          }, 1000);
+        }
+      }
+
+      function resetTimer() {
+        clearInterval(timerId);
+        timerId = null;
+        timeLeft = isFocusMode ? 25 * 60 : 5 * 60;
+        updateDisplay();
+        document.getElementById('start-btn').innerText = 'START';
+      }
+
+      function toggleAmbient(type, btn) {
+        const audio = document.getElementById(`audio-${type}`);
+        if (!audioUnlocked) {
+          showToast('Please click ENTER SPACE first!');
+          return;
+        }
+        if (audio.paused) {
+          audio
+            .play()
+            .then(() => {
+              btn.classList.add('active');
+              activeSounds.add(type);
+              updateTheme();
+            })
+            .catch((e) => showToast('Sound playback error!'));
+        } else {
+          audio.pause();
+          btn.classList.remove('active');
+          activeSounds.delete(type);
+          updateTheme();
+        }
+      }
+
+      function addTask() {
+        const input = document.getElementById('task-input');
+        const list = document.getElementById('task-list');
+        if (!input.value.trim()) return;
+        const li = document.createElement('li');
+        li.className =
+          'flex items-center gap-4 p-4 bg-white/40 rounded-2xl border border-accent/5 group animate-in slide-in-from-bottom-4 duration-500';
+        li.innerHTML = `<input type="checkbox" class="w-5 h-5 accent-accent rounded-lg"><span class="text-sm flex-1 font-bold text-[#001219]">${input.value}</span><button onclick="this.parentElement.remove()" class="opacity-0 group-hover:opacity-100 text-accent font-black text-[10px] px-2">REMOVE</button>`;
+        list.prepend(li);
+        input.value = '';
+        showToast('Goal Added!');
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        toast.style.transform = 'translateY(0)';
+        setTimeout(() => (toast.style.transform = 'translateY(160px)'), 3000);
+      }
+
+      document
+        .getElementById('task-input')
+        .addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') addTask();
+        });
+    </script>
+  </body>
+</html>
