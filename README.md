@@ -1,37 +1,47 @@
-🎧 Lofi Focus Room
-A high-performance, minimalist productivity web application designed to facilitate deep work through a combination of the Pomodoro technique and immersive ambient soundscapes.
+<div align="center">
 
-🚀 Live Demo
-https://lofi-focus-room.vercel.app/
+<img src="https://i.ibb.co/DfSLQhWX/Screenshot-2026-04-16-140219.png" alt="Lofi Focus Room Banner" width="100%">
 
-✨ Features
-Immersive Ambient Mixer: Mix and match high-quality sounds including Rain, Fire, Cafe, and Nature.
+</div>
 
-Pomodoro Engine: Built-in Focus and Break cycles (25/5 minutes) with visual countdowns.
+# **🎧 Lofi Focus Room**
 
-Dynamic Theme Engine: The UI aesthetic (background and accent colors) automatically adapts based on the active audio environment.
+*"A minimalist, high-performance productivity workspace designed for deep work."*
 
-Goal Management: A real-time task tracker to manage objectives during sessions.
+**Lofi Focus Room** is a specialized web application that facilitates focused work sessions by combining the proven **Pomodoro technique** with high-fidelity, immersive ambient soundscapes. It provides a distraction-free digital environment where audio and visual aesthetics adapt to your workflow.
 
-Glassmorphism UI: A modern, translucent interface designed for a distraction-free experience.
+## **✨ Key Features**
 
-Fully Responsive: Optimized for desktop, tablet, and mobile orientations.
+* **Immersive Ambient Mixer**: Create your perfect focus environment by mixing high-quality concurrent audio streams including Rain, Fire, Cafe, and Nature.  
+* **Precision Pomodoro Engine**: Integrated Focus and Break cycles (25/5 minutes) with clear visual countdowns and automated state transitions.  
+* **Dynamic Theme Engine**: A unique system where the entire UI aesthetic (background gradients and accent colors) automatically shifts to match your active audio environment.  
+* **Integrated Goal Management**: A real-time task tracker designed to help you organize and check off objectives without leaving your focus session.  
+* **Glassmorphism UI**: A modern, translucent interface designed to be visually soothing and completely distraction-free.  
+* **Adaptive Design**: Fully optimized for a seamless transition between desktop, tablet, and mobile orientations.
 
-🛠 Tech Stack
-Frontend: HTML5, JavaScript (ES6+)
+## **🛠️ Tech Stack**
 
-Styling: Tailwind CSS (Utility-first framework)
+* **Frontend Framework**: HTML5 & JavaScript (ES6+)  
+* **Styling Engine**: Tailwind CSS (Utility-first framework)  
+* **Audio Engineering**: Web Audio API (Low-latency stream management)  
+* **Typography**: Google Fonts (*Varela Round*, *Space Mono*, *Playfair Display*)
 
-Audio Logic: Web Audio API (for low-latency, concurrent stream management)
+## **🏗️ Technical Deep Dive**
 
-Fonts: Google Fonts API (Varela Round, Space Mono, Playfair Display)
+### **Audio Engineering**
 
-🏗 Technical Deep Dive
-Audio Engineering
-The app leverages the Web Audio API to handle multiple concurrent audio streams. To comply with modern browser autoplay policies, I implemented an initialization overlay that "unlocks" the AudioContext upon the first user interaction, ensuring a seamless audio experience.
+The core of the application leverages the **Web Audio API** to handle multiple concurrent high-definition audio streams. To navigate modern browser autoplay restrictions, I implemented a tactical initialization layer that unlocks the AudioContext upon the first user interaction, ensuring a seamless and reliable audio experience.
 
-State Management
-I developed a custom JavaScript engine to synchronize the Pomodoro timer state with the UI. The timer handles transition logic between focus and break modes, triggering notifications and automatic mode switches.
+### **State Synchronization**
 
-Responsive & Adaptive Design
-Using Tailwind CSS, the application utilizes a mobile-first approach. Visual depth is achieved through backdrop filters (Glassmorphism), and transitions are handled via CSS variables to ensure smooth color shifting when themes change.
+I developed a custom JavaScript engine to keep the Pomodoro timer state perfectly in sync with the UI components. This engine handles the complex logic required for transitioning between focus and break modes, including automatic audio cues and mode-switching notifications.
+
+### **Responsive Glassmorphism**
+
+Using **Tailwind CSS**, I utilized a mobile-first approach to architecture. Visual depth is achieved through advanced backdrop filters, while theme transitions are handled via managed CSS variables to ensure smooth color shifting during environment changes.
+
+## **📜 License**
+
+This project is licensed under the **MIT License**.
+
+**Designed and Built with ❤️ by [Anuj Tiwari](https://anujtiwari.vercel.app/)**
